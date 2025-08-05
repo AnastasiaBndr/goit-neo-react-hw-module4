@@ -1,0 +1,28 @@
+:root {
+  --border-color: rgb(0 128 96 / 36%);
+}
+
+.contact-container {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  width: 250px;
+  justify-content: space-between;
+  border: 1.5px solid var(--border-color);
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.name-number-container {
+  text-align: left;
+}
+
+.icon-name-container {
+  display: flex;
+  align-items: center;
+  gap:5px;
+}
+
+.phone{
+    margin-right: 4px;
+}

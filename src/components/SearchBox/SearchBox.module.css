@@ -1,0 +1,35 @@
+.searchbox-container{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 250px;
+    gap:2px;
+}
+
+.label{
+    font-size: 14px;
+}
+
+.field {
+  border: 1.5px solid rgb(60 66 87 / 45%);
+  outline: 0;
+  color: rgb(60, 66, 87);
+  background-color: rgb(255, 255, 255);
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  padding: 4px 8px;
+  min-height: 28px;
+  vertical-align: middle;
+  transition: border-color 0.24s;
+  transition-property: border-color;
+  transition-duration: 0.24s;
+  transition-timing-function: ease;
+  transition-delay: 0s;
+}
+
+.field:focus,
+.field:hover {
+  border-color: var(--border-color)
+}
