@@ -6,7 +6,5 @@ export default function LoadMoreBtn({ onClick }) {
       LoadMore
     </button>
 
-
-
   );
 }
