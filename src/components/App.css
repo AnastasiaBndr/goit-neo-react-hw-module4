@@ -40,3 +40,10 @@ button:hover:hover,
 button:hover {
   background: var(--button-hover-color);
 }
+
+.gallery-loader-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
