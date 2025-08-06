@@ -6,7 +6,7 @@ import { useState, useRef } from "react";
 import Loader from "./Loader";
 import ErrorMessage from "./ErrorMessage";
 import LoadMoreBtn from "./LoadMoreBtn";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import ImageModal from "./ImageModal";
 
 function App() {
@@ -15,19 +15,16 @@ function App() {
   const [error, setError] = useState(false);
   const [loadMore, setLoadMore] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [valuesForModal, setValuesForModal] = useState({});
 
   const apiRef = useRef(new ApiComponent()).current;
 
-  function openModal() {
+  const modalHandleClick = (e) => {
+    const { id } = e.target;
+    const img = photos.find((photo) => photo.id == id);
+    setValuesForModal(img);
     setIsOpen(true);
-  }
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function modalHandleClick(e) {
-    console.log(e);
-  }
+  };
 
   const loadPhotos = async (topic, isNewSearch = false) => {
     try {
@@ -46,31 +43,30 @@ function App() {
       const totalHits = data.total;
       const totalPages = Math.ceil(totalHits / apiRef.limit);
 
-      setPhotos(prev => {
+      setPhotos((prev) => {
         if (isNewSearch) return data.results;
 
-        const existingIds = new Set(prev.map(p => p.id));
-        const newUnique = data.results.filter(p => !existingIds.has(p.id));
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newUnique = data.results.filter((p) => !existingIds.has(p.id));
         return [...prev, ...newUnique];
       });
 
       setLoadMore(apiRef.page < totalPages);
-    } catch (err) {
+    } catch {
       setError(true);
     } finally {
       setLoading(false);
     }
   };
 
-
   const onSubmit = async (e) => {
     e.preventDefault();
     const topic = e.target[0].value;
     if (!topic) {
-      toast.error('Write anything!');
+      toast.error("Write anything!");
       return;
     }
-    await loadPhotos(topic, true);
+    await loadPhotos(topic.trim(), true);
   };
 
   const handleLoadMore = async () => {
@@ -88,7 +84,12 @@ function App() {
         <Toaster position="top-left" />
       </div>
       {loadMore && <LoadMoreBtn onClick={handleLoadMore} />}
-      {modalIsOpen && <ImageModal openModal={openModal} closeModal={closeModal} />}
+
+        <ImageModal
+          isOpen={modalIsOpen}
+          closeModal={() => setIsOpen(false)}
+          valuesForModal={valuesForModal}
+        />
 
     </>
   );

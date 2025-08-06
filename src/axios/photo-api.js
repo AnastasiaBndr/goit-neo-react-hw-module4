@@ -14,6 +14,7 @@ export class ApiComponent {
   baseSearchParams = {
     client_id: this.#accessKey,
     count: this.limit,
+    orientstion: "landscape"
   };
 
   nextPage() {
