@@ -8,6 +8,7 @@ import ErrorMessage from "./ErrorMessage";
 import LoadMoreBtn from "./LoadMoreBtn";
 import toast, { Toaster } from "react-hot-toast";
 import ImageModal from "./ImageModal";
+import ReactModal from "react-modal";
 
 function App() {
   const [photos, setPhotos] = useState([]);
@@ -16,6 +17,8 @@ function App() {
   const [loadMore, setLoadMore] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [valuesForModal, setValuesForModal] = useState({});
+
+  ReactModal.setAppElement("#root");
 
   const apiRef = useRef(new ApiComponent()).current;
 
@@ -78,19 +81,20 @@ function App() {
     <>
       <SearchBar onSubmit={onSubmit} />
       <div className="gallery-loader-container">
-        <ImageGallery onClick={modalHandleClick} photos={photos} />
+        {photos.length > 0 && (
+          <ImageGallery onClick={modalHandleClick} photos={photos} />
+        )}
         {loading && <Loader />}
         {error && <ErrorMessage />}
         <Toaster position="top-left" />
       </div>
       {loadMore && <LoadMoreBtn onClick={handleLoadMore} />}
 
-        <ImageModal
-          isOpen={modalIsOpen}
-          closeModal={() => setIsOpen(false)}
-          valuesForModal={valuesForModal}
-        />
-
+      <ImageModal
+        isOpen={modalIsOpen}
+        closeModal={() => setIsOpen(false)}
+        valuesForModal={valuesForModal}
+      />
     </>
   );
 }

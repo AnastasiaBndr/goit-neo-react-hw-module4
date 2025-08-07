@@ -2,7 +2,6 @@ import css from "./ImageGallery.module.css";
 import ImageCard from "../ImageCard";
 
 export default function ImageGallery({ photos, onClick }) {
-  console.log(photos)
   return (
     <ul className={css["gallery-container"]}>
       {photos.map((photo) => {

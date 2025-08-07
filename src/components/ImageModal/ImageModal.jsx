@@ -25,7 +25,6 @@ const customStyles = {
 };
 
 export default function ImageModal({ isOpen, closeModal, valuesForModal }) {
-  console.log(valuesForModal);
   return (
     <ReactModal
       isOpen={isOpen}
