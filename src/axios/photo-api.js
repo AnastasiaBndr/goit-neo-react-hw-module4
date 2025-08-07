@@ -9,7 +9,6 @@ axios.defaults.baseURL = `https://api.unsplash.com`;
 export class ApiComponent {
   #accessKey = "IjDvYHmww1mX0Xy7Qm4q6H0CWxq6BmjQW3pGp7WUh_o";
   limit = 10;
-  page = 1;
 
   baseSearchParams = {
     client_id: this.#accessKey,
@@ -18,20 +17,12 @@ export class ApiComponent {
     content_filter: "high"
   };
 
-  nextPage() {
-    this.page += 1;
-  }
-
-  resetPage() {
-    this.page = 1;
-  }
-
-  async fetchPhotos(topic) {
+  async fetchPhotos(topic,page) {
     if (!topic.trim()) return;
     const searchParams = new URLSearchParams({
       ...this.baseSearchParams,
       query: topic,
-      page: this.page,
+      page: page,
     });
 
     const resp = await axios.get(`/search/photos/?${searchParams.toString()}`);

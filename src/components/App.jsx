@@ -1,14 +1,21 @@
-import "./App.css";
+//libraries
+import ReactModal from "react-modal";
+import toast, { Toaster } from "react-hot-toast";
+import { useState, useRef, useEffect } from "react";
+
+//components
 import SearchBar from "./SearchBar";
 import ImageGallery from "./ImageGallery";
-import { ApiComponent } from "../axios";
-import { useState, useRef } from "react";
 import Loader from "./Loader";
 import ErrorMessage from "./ErrorMessage";
 import LoadMoreBtn from "./LoadMoreBtn";
-import toast, { Toaster } from "react-hot-toast";
 import ImageModal from "./ImageModal";
-import ReactModal from "react-modal";
+
+//api
+import { ApiComponent } from "../axios";
+
+//styles
+import "./App.css";
 
 function App() {
   const [photos, setPhotos] = useState([]);
@@ -17,10 +24,48 @@ function App() {
   const [loadMore, setLoadMore] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [valuesForModal, setValuesForModal] = useState({});
+  const [query, setQuery] = useState("nature");
+  const [page, setPage] = useState(1);
 
   ReactModal.setAppElement("#root");
 
   const apiRef = useRef(new ApiComponent()).current;
+
+  useEffect(() => {
+    if (!query) {
+      toast.error("Write anything!");
+      return;
+    }
+    async function fetchData() {
+      try {
+        setLoading(true);
+        setError(false);
+        setLoadMore(false);
+
+        if (page === 1) {
+          setPhotos([]);
+        }
+
+        const data = await apiRef.fetchPhotos(query, page);
+        const totalHits = data.total;
+        const totalPages = Math.ceil(totalHits / apiRef.limit);
+
+        setPhotos((prev) => {
+          if (page === 1) return data.results;
+          const existingIds = new Set(prev.map((p) => p.id));
+          const newUnique = data.results.filter((p) => !existingIds.has(p.id));
+          return [...prev, ...newUnique];
+        });
+
+        setLoadMore(page < totalPages);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [query, apiRef, page]);
 
   const modalHandleClick = (e) => {
     const { id } = e.target;
@@ -29,52 +74,20 @@ function App() {
     setIsOpen(true);
   };
 
-  const loadPhotos = async (topic, isNewSearch = false) => {
-    try {
-      setLoading(true);
-      setError(false);
-      setLoadMore(false);
-
-      if (isNewSearch) {
-        apiRef.resetPage();
-        setPhotos([]);
-      } else {
-        apiRef.nextPage();
-      }
-
-      const data = await apiRef.fetchPhotos(topic);
-      const totalHits = data.total;
-      const totalPages = Math.ceil(totalHits / apiRef.limit);
-
-      setPhotos((prev) => {
-        if (isNewSearch) return data.results;
-
-        const existingIds = new Set(prev.map((p) => p.id));
-        const newUnique = data.results.filter((p) => !existingIds.has(p.id));
-        return [...prev, ...newUnique];
-      });
-
-      setLoadMore(apiRef.page < totalPages);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onSubmit = async (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    const topic = e.target[0].value;
-    if (!topic) {
-      toast.error("Write anything!");
+    const inputValue = e.target[0].value;
+    if (!inputValue) {
+      toast.error("Write something!");
       return;
     }
-    await loadPhotos(topic.trim(), true);
+    setPhotos([]);
+    setPage(1);
+    setQuery(inputValue.trim());
   };
 
   const handleLoadMore = async () => {
-    const topic = document.querySelector("input").value;
-    await loadPhotos(topic, false);
+    setPage((prev) => prev + 1);
   };
 
   return (
