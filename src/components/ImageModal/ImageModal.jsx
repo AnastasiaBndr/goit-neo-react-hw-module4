@@ -51,7 +51,7 @@ export default function ImageModal({ isOpen, closeModal, valuesForModal }) {
             width={400}
             alt={valuesForModal.alt_description}
           />
-          <p>{valuesForModal.created_at.slice(0,10)}</p>
+          <p className={css.date}>{valuesForModal.created_at.slice(0,10)}</p>
           <div className={css.icons}>
             <FaRegComment />
             <BiRepost size={20} />
